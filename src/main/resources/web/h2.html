@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>repChain Graph</title>
+    <script src="js/d3.v3.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/rep_graph.js"></script>
+    <script src="js/protobuf.js"></script>
+    <style>
+        path.slink {
+        fill: none;
+        stroke: #666;
+        stroke-width: 1.5px;
+        }
+        .link {
+            stroke: #2E2E2E;
+            stroke-width: 0.5px;
+        }
+
+        .node {
+            stroke: #fff;
+            stroke-width: 2px;
+        }
+        .textClass {
+            stroke: #323232;
+            font-family: "Lucida Grande", "Droid Sans", Arial, Helvetica, sans-serif;
+            font-weight: normal;
+            stroke-width: .5;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<button onclick="addNodes()">Restart Animation</button>
+<script>
+   //var slinks = [];
+    var graph;
+
+
+    function drawGraph() {
+        var w = this.w;
+        var h = this.h;
+        var mt = 80;
+        
+        graph = new myGraph("#svgdiv");
+        var w = graph.w;
+        var h = graph.h;
+
+        graph.addNode({"id":'c0',x: w/2, y: h/2, fixed:true});
+        graph.addNode({"id":'t1',fixed:true,x:w/2-mt,y:h/2-mt});
+        graph.addNode({"id":'t2',fixed:true,x:w/2+mt,y:h/2-mt});
+        graph.addNode({"id":'t3',fixed:true,x:w/2+mt,y:h/2+mt});
+        graph.addNode({"id":'t4',fixed:true,x:w/2-mt,y:h/2+mt});
+    }
+
+    
+
+    // because of the way the network is created, nodes are created first, and links second,
+    // so the lines were on top of the nodes, this just reorders the DOM to put the svg:g on top
+    function keepNodesOnTop() {
+        $(".nodeStrokeClass").each(function( index ) {
+            var gnode = this.parentNode;
+            gnode.parentNode.appendChild(gnode);
+        });
+    }
+    function addNodes() {
+        d3.select("svg").remove();
+        drawGraph();
+    }
+
+    $( document ).ready(function() {
+        drawGraph();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Animating Changes in Force Diagram</title>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <style>
+ path.slink {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+        .link {
+            stroke: #2E2E2E;
+            stroke-width: 0.5px;
+        }
+
+        .node {
+            stroke: #fff;
+            stroke-width: 2px;
+        }
+        .textClass {
+            stroke: #323232;
+            font-family: "Lucida Grande", "Droid Sans", Arial, Helvetica, sans-serif;
+            font-weight: normal;
+            stroke-width: .5;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<button onclick="addNodes()">Restart Animation</button>
+<script>
+   var slinks = [];
+    var graph;
+    var mt = 80;
+    //订阅连线，不参与force运算
+
+    function myGraph() {
+
+        this.addSLink=function(source, target, value){
+            slinks.push({"source": findNode(source), "target": findNode(target), "value": value});
+            update();
+        }
+        // Add and remove elements on the graph object
+        this.addNode = function (id) {
+            if(id=="c0")
+                nodes.push({"id":id,x: w/2, y: h/2, fixed:true});
+            else if(id=="t1")
+                nodes.push({"id":id,fixed:true,x:w/2-mt,y:h/2-mt});
+            else if(id=="t2")
+                nodes.push({"id":id,fixed:true,x:w/2+mt,y:h/2-mt});
+            else if(id=="t3")
+                nodes.push({"id":id,fixed:true,x:w/2+mt,y:h/2+mt});
+            else if(id=="t4")
+                nodes.push({"id":id,fixed:true,x:w/2-mt,y:h/2+mt});
+            else
+                nodes.push({"id": id});
+            update();
+        };
+
+        this.removeNode = function (id) {
+            var i = 0;
+            var n = findNode(id);
+            while (i < links.length) {
+                if ((links[i]['source'] == n) || (links[i]['target'] == n)) {
+                    links.splice(i, 1);
+                }
+                else i++;
+            }
+
+           i=0;
+           while (i < slinks.length) {
+                if ((slinks[i]['source'] == n) || (slinks[i]['target'] == n)) {
+                    slinks.splice(i, 1);
+                }
+                else i++;
+            }
+
+            nodes.splice(findNodeIndex(id), 1);
+            update();
+        };
+
+        this.removeLink = function (source, target) {
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].source.id == source && links[i].target.id == target) {
+                    links.splice(i, 1);
+                    break;
+                }
+            }
+            update();
+        };
+
+        this.removeallLinks = function () {
+            links.splice(0, links.length);
+            update();
+        };
+
+        this.removeAllNodes = function () {
+            nodes.splice(0, links.length);
+            update();
+        };
+
+        this.addLink = function (source, target, value) {
+            links.push({"source": findNode(source), "target": findNode(target), "value": value});
+            update();
+        };
+
+        var findNode = function (id) {
+            for (var i in nodes) {
+                if (nodes[i]["id"] === id) return nodes[i];
+            }
+            ;
+        };
+
+        var findNodeIndex = function (id) {
+            for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].id == id) {
+                    return i;
+                }
+            }
+            ;
+        };
+
+        // set up the D3 visualisation in the specified element
+       this.setup=function(){
+        var w = 960,
+                h = 450;
+
+        var color = d3.scale.category10();
+
+        var svg = d3.select("body").append("svg")
+            .attr("width", w)
+            .attr("height", h);        
+		// build the arrow.
+		svg.append("svg:defs").selectAll("marker")
+		    .data(["end"])      // Different link/path types can be defined here
+		  .enter().append("svg:marker")    // This section adds in the arrows
+		    .attr("id", String)
+		    .attr("viewBox", "0 -5 10 10")
+		    .attr("refX", 15)
+		    .attr("refY", -1.5)
+		    .attr("markerWidth", 6)
+		    .attr("markerHeight", 6)
+		    .attr("orient", "auto")
+		  .append("svg:path")
+		    .attr("d", "M0,-5L10,0L0,5");
+        var vis = svg
+                .attr("id", "svg")
+                .attr("pointer-events", "all")
+                .attr("viewBox", "0 0 " + w + " " + h)
+                .attr("perserveAspectRatio", "xMinYMid")
+                .append('svg:g');
+
+        var force = d3.layout.force();
+        var nodes = force.nodes(),
+                links = force.links();
+      var update = function () {
+	  var path = vis.selectAll("path")
+	    .data(slinks,function (d) {
+               return 'p_'+d.source.id + "-" + d.target.id;
+           });
+	  path.enter().append("svg:path")
+          .attr("id", function (d) {
+            return 'p_'+d.source.id + "-" + d.target.id;
+        })
+	
+	    .attr("class", function(d) { return "slink "; })
+	    .attr("marker-end", "url(#end)");
+            var link = vis.selectAll("line")
+                    .data(links, function (d) {
+                        return d.source.id + "-" + d.target.id;
+                    });
+
+            link.enter().append("line")
+             //.attr("marker-end", "url(#end)")
+                    .attr("id", function (d) {
+                        return d.source.id + "-" + d.target.id;
+                    })
+                    .attr("stroke-width", function (d) {
+                        return d.value / 10;
+                    })
+                    .attr("class", "link");
+            link.append("title")
+                    .text(function (d) {
+                        return d.value;
+                    });
+            link.exit().remove();
+
+            var node = vis.selectAll("g.node")
+                    .data(nodes, function (d) {
+                        return d.id;
+                    });
+
+
+            var nodeEnter = node.enter().append("g")
+                    .attr("class", "node")
+                    .call(force.drag);
+
+            nodeEnter.append("svg:circle")
+                    .attr("r", 12)
+                    .attr("id", function (d) {
+                        return "Node;" + d.id;
+                    })
+                    .attr("class", "nodeStrokeClass")
+                    .attr("fill", function(d) { return color(d.id); });
+
+            nodeEnter.append("svg:text")
+                    .attr("class", "textClass")
+                    .attr("x", 14)
+                    .attr("y", ".31em")
+                    .text(function (d) {
+                        return d.id;
+                    });
+
+            node.exit().remove();
+
+            
+
+            force.on("tick", function () {
+
+                node.attr("transform", function (d) {
+                    return "translate(" + d.x + "," + d.y + ")";
+                });
+
+        path.attr("d", function(d) {
+        var dx = d.target.x - d.source.x,
+            dy = d.target.y - d.source.y,
+            dr = Math.sqrt(dx * dx + dy * dy);
+        return "M" + 
+            d.source.x + "," + 
+            d.source.y + "A" + 
+            dr + "," + dr + " 0 0,1 " + 
+            d.target.x + "," + 
+            d.target.y;
+    });
+
+                link.attr("x1", function (d) {
+                    return d.source.x;
+                })
+                        .attr("y1", function (d) {
+                            return d.source.y;
+                        })
+                        .attr("x2", function (d) {
+                            return d.target.x;
+                        })
+                        .attr("y2", function (d) {
+                            return d.target.y;
+                        });
+            });
+
+            // Restart the force layout.
+            force
+                    .gravity(.1)
+                    //.charge(-8000000)
+                    .charge(function(d){
+                        var charge = -500;
+                        if (d.index === 0) {
+                            charge = 10 * charge;
+                            //d.fixed = true;
+                        }
+                        return charge;
+                    })
+                    //.friction(0)
+                    .linkDistance( function(d) { return d.value * 8 } )
+                    .size([w, h])
+                    .start();
+        };
+        // Make it all go
+        update();
+    }
+ }
+    function drawGraph() {
+
+        graph = new myGraph("#svgdiv");
+		graph.setup();
+
+        graph.addNode('c0');
+        graph.addNode('c1');
+        graph.addNode('c2');
+        graph.addNode('c3');
+        graph.addNode('t1');
+        graph.addNode('t2');
+        graph.addNode('t3');
+        graph.addNode('t4');
+
+
+        graph.addLink('c0', 'c1', '20');
+        graph.addLink('c0', 'c2', '20');
+        graph.addLink('c0', 'c3', '20');
+        
+        graph.addSLink('c3','t1',20);
+        graph.addSLink('c1','t1',20);
+/*       graph.addLink('t1', 'c1', '20');
+         graph.addLink('t2', 'c1', '20');
+         graph.addLink('t3', 'c1', '20');
+
+         graph.addLink('t1', 'c2', '20');
+         graph.addLink('t2', 'c2', '20');
+         graph.addLink('t3', 'c2', '20');
+*/
+        //keepNodesOnTop();
+
+        // callback for the changes in the network
+        var count_add = 4;
+
+        function addNodeLink(){
+            count_add++;
+            var cl = 'c'+count_add;
+            graph.addNode(cl);
+            graph.addLink('c0', cl, '20');            
+            if(count_add<10){
+                setTimeout(function(){
+                    addNodeLink();
+                },1000);
+            }else{
+                setTimeout(function(){
+                    graph.removeNode("c2");
+                },1000);
+
+                
+            }
+        }
+        addNodeLink();
+
+
+    }
+
+    drawGraph();
+
+    // because of the way the network is created, nodes are created first, and links second,
+    // so the lines were on top of the nodes, this just reorders the DOM to put the svg:g on top
+    function keepNodesOnTop() {
+        $(".nodeStrokeClass").each(function( index ) {
+            var gnode = this.parentNode;
+            gnode.parentNode.appendChild(gnode);
+        });
+    }
+    function addNodes() {
+        d3.select("svg")
+                .remove();
+         drawGraph();
+    }
+
+
+</script>
+</body>
+</html>

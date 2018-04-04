@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="HydraSettings">
+    <option name="hydraStorePath" value="E:\workspace\chen4w-repchain-dev_cj\repchain\.hydra\idea" />
+    <option name="noOfCores" value="2" />
+    <option name="projectRoot" value="E:\workspace\chen4w-repchain-dev_cj\repchain" />
+    <option name="sourcePartitioner" value="auto" />
+  </component>
+</project>

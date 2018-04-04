@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CSpec>
+	<stype>2</stype>
+	<idPath></idPath>
+	<idName>cb771ee21a71557dfb0c1272caf7152d5331eec06b45765b8981d9bd515f14a4</idName>
+	<iptFunc>set</iptFunc>
+	<iptArgs>
+{
+  "1AqZs6vhcLiiTvFxqS5CEqMw6xWuX9xqyi" : 1000000,
+  "1GvvHCFZPajq5yVY44n7bdmSfv2MJ5LyLs" : 1000000,
+  "16SrzMbzdLyGEUKY5FsdE8SVt5tQV1qmBY" : 100,
+  "12kAzqqhuq7xYgm9YTph1b9zmCpZPyUWxf" : 1000000,
+  "1MH9xedPTkWThJUgT8ZYehiGCM7bEZTVGN" : 1000000
+}
+	
+	</iptArgs>
+	<timeout>0</timeout>
+	<secureContext>string</secureContext>
+	<code>
+	</code>
+	<ctype>2</ctype>
+</CSpec>

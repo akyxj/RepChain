@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="sbt: org.mapdb:mapdb:2.0-beta13:jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.mapdb/mapdb/bundles/mapdb-2.0-beta13.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.mapdb/mapdb/srcs/mapdb-2.0-beta13-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
