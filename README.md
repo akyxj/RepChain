@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # repChain
 响应式许可链
 
@@ -32,3 +33,7 @@
 - Run configuration 配置VM参数 -Dlogback.configurationFile=conf/logback.xml (使logback配置生效)
 - view realtime graph `http://localhost:8081/web/g1.html`
 - view rest apis `http://localhost:8081/swagger/index.html`
+=======
+# RepChain
+RepChain是采用响应式编程实现自主可控的许可链。
+>>>>>>> c1fd156a94a16b4947fc75c7053514e70e2e1b7a
